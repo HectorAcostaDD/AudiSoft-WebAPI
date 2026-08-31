@@ -106,6 +106,20 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var dbContext = services.GetRequiredService<AppDbContext>();
+        dbContext.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Ocurrió un error al aplicar las migraciones a la base de datos.");
+    }
+}
 app.UseMiddleware<ErrorHandlerMiddleware>();
 //if (app.Environment.IsDevelopment())
 {
@@ -119,5 +133,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapGet("/", () => Results.Redirect("/swagger/index.html"));
 app.Run();
