@@ -2,11 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Models;
 using WebAPI;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TeachersController : ControllerBase
     {
         private readonly AppDbContext _context;
