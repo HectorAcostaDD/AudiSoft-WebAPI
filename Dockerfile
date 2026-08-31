@@ -2,12 +2,16 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY ["WebAPI.csproj", "./"]
-RUN dotnet restore "WebAPI.csproj"
+COPY ["WebAPI.sln", "./"]
+COPY ["WebAPI/WebAPI.csproj", "WebAPI/"]
+
+RUN dotnet restore "WebAPI/WebAPI.csproj"
 
 COPY . .
+WORKDIR "/src/WebAPI"
 RUN dotnet publish -c Release -o /app/publish
 
+# Etapa de ejecución (Runtime)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 8080
